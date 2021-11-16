@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Hangman
 {
@@ -21,15 +22,19 @@ namespace Hangman
                 "spaceship"
             };
 
-            //variable for correct word and guessed word
+            //variable for correct word, guessed word, and guesses
             Random rnd = new Random();
             int num = rnd.Next(0, 9);
             string correctWord = wordList[num];
-            char[] guessSoFar = new char[correctWord.Length];
+            List<char> guesses = new List<char>();
+            char[] placeholderDisplay = new char[correctWord.Length];
+            
+            //setting default values as '_' in placeholderDisplay
             for (int i = 0; i < correctWord.Length; i++)
             {
-                guessSoFar[i] = '_';
+                placeholderDisplay[i] = '_';
             }
+
             //guesses
             int strikes = 0;
             char guess;
@@ -37,6 +42,7 @@ namespace Hangman
             Console.WriteLine("6 strikes and the hanging commences!");
             do
             {
+                //hangman display
                 switch (strikes)
                 {
                     case 0:
@@ -61,34 +67,44 @@ namespace Hangman
                         Console.WriteLine("-----\n|   |  \n|   O\n| --|--\n|  / \\\n|\n=======");
                         break;
                 }
-                //add guess letters here?
 
-
+                //display previous guesses
+                Console.Write("Previous Guesses: ");
+                foreach (var letter in guesses)
+                {
+                    Console.Write("{0}", letter);
+                }
 
                 Console.WriteLine("\n");
-                foreach (var letter in guessSoFar)
+
+                //display placeholders/correct guesses
+                foreach (var letter in placeholderDisplay)
                 {
-                    Console.Write(letter);
+                    Console.Write("{0 }", letter);
                 }
                 Console.WriteLine("\n");
+
+                //Guess prompt, intake, and store
                 Console.Write("Guess a letter: ");
                 guess = Convert.ToChar(Console.ReadLine());
+                guesses.Add(guess);
 
                 //word length display
                 for (int i = 0; i < correctWord.Length; i++)
                 {
                     if (guess == correctWord[i])
                     {
-                        guessSoFar[i] = guess;
+                        placeholderDisplay[i] = guess;
                     }
                 }
-
+                //strike if incorrect guess
                 if (!(correctWord.Contains(guess)))
                 {
                     strikes++;
                 }
 
-                string guessedWord = new string(guessSoFar);
+                //check if guessed word matches correct word
+                string guessedWord = new string(placeholderDisplay);
                 if (guessedWord == correctWord)
                 {
                     break;
@@ -97,6 +113,8 @@ namespace Hangman
             }
             while (strikes != 6);
 
+
+            //gameover message (win or lose)
             Console.WriteLine("The correct word was {0}!", correctWord);
             if (strikes != 6)
             {
@@ -117,4 +135,4 @@ namespace Hangman
 // * Random generator for what hint to choose to display; 3 hints max.
 // *If single player and no hangman "graphic," displays how many turns they have left (head, body, arm, arm, leg, leg --total of 6 guesses).
 // *Difficulty level of words?
-// Add
+// Add letters guessed.
