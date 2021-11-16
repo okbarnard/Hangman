@@ -7,24 +7,8 @@ namespace Hangman
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Hangman!");
-            Console.WriteLine("Are you ready to get started? Y/N: ");
-
-            char start = Convert.ToChar(Console.ReadLine()); //maybe just accept a string?
-
-            if (start == 'y' || start == 'Y')
-            {
-                Hangman();
-            } 
-            else
-            {
-                //exit program with message
-            }
-        }
-
-        static void Hangman()
-        {
             //Add letters guessed
-            string[] wordList = { 
+            string[] wordList = {
                 "computer",
                 "waterfountain",
                 "sunglasses",
@@ -105,7 +89,7 @@ namespace Hangman
                 }
 
                 string guessedWord = new string(guessSoFar);
-                if(guessedWord == correctWord)
+                if (guessedWord == correctWord)
                 {
                     break;
                 }
@@ -122,7 +106,6 @@ namespace Hangman
             {
                 Console.WriteLine("You've been hung! ): ): ");
             }
-           
         }
     }
 }
