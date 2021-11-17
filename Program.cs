@@ -73,11 +73,26 @@ namespace Hangman
                 Display(guesses.ToArray());
                 Display(placeholderDisplay);
 
+                bool intIsTrue;
                 //Guess prompt, intake, and store; could add an option for them to correct the whole word here.
                 do
                 {
+                    intIsTrue = false;
                     Console.Write("Guess a letter: ");
+                    int intInput;
                     input = Console.ReadLine();
+
+                    if (string.IsNullOrEmpty(input))
+                    {
+                        Console.WriteLine("Guess cannot be blank!");
+                    }
+
+                    
+                    if (int.TryParse(input, out intInput))
+                    {
+                        Console.WriteLine("Please enter a letter or guess the word.");
+                        intIsTrue = true;
+                    }
 
                     input = input.Trim().ToLower();
 
@@ -92,12 +107,12 @@ namespace Hangman
                         Console.WriteLine(hint);
                     }
 
-                    if (input.Length > 1 && input != "exit" && input == "hint" && input != correctWord)
+                    if ((input.Length > 1 && input != "exit" && input != "hint" && input != correctWord))
                     {
                         Console.WriteLine("You have either guessed the incorrect word or typed more than one character -- Please try again.");
                     }
                 }
-                while (input.Length > 1 && input != correctWord);
+                while ((input.Length > 1 && input != correctWord) || (string.IsNullOrEmpty(input)) || intIsTrue);
 
                 if (input == correctWord || input == "exit")
                 {
@@ -257,5 +272,4 @@ namespace Hangman
  *
  *general notes
  * add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
- *add catch if user enters a number
  */
