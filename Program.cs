@@ -106,38 +106,48 @@ namespace Hangman
 
                 //if guess already exists... Don't add, don't add strike. Display message.
                 guess = Convert.ToChar(input);
-                guesses.Add(guess);
 
-                //if guess is correct, update placeholderDisplay
-                for (int i = 0; i < correctWord.Length; i++)
-                {
-                    if (guess == correctWord[i])
-                    {
-                        placeholderDisplay[i] = guess;
-                    }
-                }
-
-                //if guess is incorrect, increase strikes
-                if (!(correctWord.Contains(guess)))
-                {
-                    strikes++;
-                }
-
-                //is this a dupe of input? Is this necessary anymore?
-                //check if guessed word matches correct word
-                string guessedWord = new string(placeholderDisplay);
-                if (guessedWord == correctWord)
-                {
-                    break;
-                }
-
-                Console.WriteLine("Need a hint? Type \"hint\".");
-                Console.WriteLine("To quit, type \"exit\".");
-
-
-                if (strikes < 6)
+                if (guesses.Contains(guess))
                 {
                     Console.Clear();
+                    Console.WriteLine("You've already guessed this.");
+                }
+                else
+                {
+                    guesses.Add(guess);
+
+                    //if guess is correct, update placeholderDisplay
+                    for (int i = 0; i < correctWord.Length; i++)
+                    {
+                        if (guess == correctWord[i])
+                        {
+                            placeholderDisplay[i] = guess;
+                        }
+                    }
+
+                    //if guess is incorrect, increase strikes
+                    if (!(correctWord.Contains(guess)))
+                    {
+                        strikes++;
+                    }
+
+
+                    //is this a dupe of input? Is this necessary anymore?
+                    //check if guessed word matches correct word
+                    string guessedWord = new string(placeholderDisplay);
+                    if (guessedWord == correctWord)
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Need a hint? Type \"hint\".");
+                    Console.WriteLine("To quit, type \"exit\".");
+
+
+                    if (strikes < 6)
+                    {
+                        Console.Clear();
+                    }
                 }
             }
             while (strikes != 6);
@@ -248,5 +258,4 @@ namespace Hangman
  *general notes
  * add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
  *add catch if user enters a number
- *if letter was previously entered, don't log it, no strike, message to user it was previously guessed.
  */
