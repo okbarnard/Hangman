@@ -20,7 +20,7 @@ namespace Hangman
                 }
             }
             while (difficulty < 1 || difficulty > 3);
-            
+
             //select word according to difficulty
             string correctWord = WordDifficulty(difficulty);
 
@@ -34,6 +34,7 @@ namespace Hangman
             //guess & strike declaration
             List<char> guesses = new List<char>();
             int strikes = 0;
+            string input;
             char guess;
 
             Console.WriteLine("6 strikes and the hanging commences!");
@@ -55,10 +56,10 @@ namespace Hangman
                         Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|  /\n|\n=======");
                         break;
                     case 4: //right leg
-                        Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|  / \\\n|\n=======");
+                        Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|  / \\\n|\n=======\nCareful! Two more guesses!");
                         break;
                     case 5: //left arm
-                        Console.WriteLine("-----\n|   |  \n|   O\n| --|\n|  / \\\n|\n=======");
+                        Console.WriteLine("-----\n|   |  \n|   O\n| --|\n|  / \\\n|\n=======\nOne more guess!");
                         break;
                     case 6: //right arm
                         Console.WriteLine("-----\n|   |  \n|   O\n| --|--\n|  / \\\n|\n=======");
@@ -70,9 +71,34 @@ namespace Hangman
                 Display(guesses.ToArray());
                 Display(placeholderDisplay);
 
-                //Guess prompt, intake, and store
-                Console.Write("Guess a letter: ");
-                guess = Convert.ToChar(Console.ReadLine());
+                //Guess prompt, intake, and store; could add an option for them to correct the whole word here.
+                do
+                {
+                    Console.Write("Guess a letter: ");
+                    input = Console.ReadLine();
+
+                    input = input.Trim().ToLower();
+
+                    if (input == "exit")
+                    {
+                        Console.WriteLine("Closing Program.");
+                        break;
+                    }
+
+                    if (input.Length > 1 && input != "exit" && input != correctWord)
+                    {
+                        Console.WriteLine("You have either guessed the incorrect word or typed more than one character -- Please try again.");
+                    }
+                }
+                while (input.Length > 1 && input != correctWord);
+
+                if (input == correctWord || input == "exit")
+                {
+                    break;
+                }
+
+                //if guess already exists... Don't add, don't add strike. Display message.
+                guess = Convert.ToChar(input);
                 guesses.Add(guess);
 
                 //if guess is correct, update placeholderDisplay
@@ -90,20 +116,26 @@ namespace Hangman
                     strikes++;
                 }
 
+                //is this a dupe of input? Is this necessary anymore?
                 //check if guessed word matches correct word
                 string guessedWord = new string(placeholderDisplay);
                 if (guessedWord == correctWord)
                 {
                     break;
                 }
-                Console.Clear();
+
+
+                if (strikes < 6)
+                {
+                    Console.Clear(); //adjust so it won't clear on last try
+                }
             }
             while (strikes != 6);
 
 
             //gameover message (win or lose)
             Console.WriteLine("The correct word was {0}!", correctWord);
-            if (strikes != 6)
+            if (strikes != 6 && input != "exit")
             {
                 Console.WriteLine("Congratulations! You're free!");
             }
@@ -130,7 +162,7 @@ namespace Hangman
                 "telephone",
                 "kitchen",
                 "outside",
-                "aoili",
+                "aioli",
                 "deodorant"
             };
 
@@ -196,11 +228,10 @@ namespace Hangman
  *option to provide the word (with a character limit, maybe 20) supercalifragilisticexpialidocious, no numbers or special characters
  *random generator for what hint to choose to display; 3 hints max.
  *two players will need the difficulty choices individually?
- *check for numbers in word
+ *check for numbers in custom words
  *
  *general notes
  *add hints later on? -- add option to add hints if providing the word. asking for a hint also adds a limb to the hangman. add a warning when they only have 2 limbs left and they can't ask for a hint on the last... leg (limb)
- *add option to exit game?
  *add catch if user enters a number
- *add catch if user enters a word -- probably convert to string so if they guess the word...?
+ *if letter was previously entered, don't log it, no strike, message to user it was previously guessed.
  */
