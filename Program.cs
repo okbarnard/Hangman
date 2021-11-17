@@ -22,7 +22,9 @@ namespace Hangman
             while (difficulty < 1 || difficulty > 3);
 
             //select word according to difficulty
-            string correctWord = WordDifficulty(difficulty);
+            HangmanWord wordAndHint = GenerateWord(difficulty);
+            string correctWord = wordAndHint.Word;
+            string hint = wordAndHint.Hint;
 
             //set default values as '_' in placeholderDisplay to show user
             char[] placeholderDisplay = new char[correctWord.Length];
@@ -85,7 +87,12 @@ namespace Hangman
                         break;
                     }
 
-                    if (input.Length > 1 && input != "exit" && input != correctWord)
+                    if (input == "hint")
+                    {
+                        Console.WriteLine(hint);
+                    }
+
+                    if (input.Length > 1 && input != "exit" && input == "hint" && input != correctWord)
                     {
                         Console.WriteLine("You have either guessed the incorrect word or typed more than one character -- Please try again.");
                     }
@@ -124,14 +131,16 @@ namespace Hangman
                     break;
                 }
 
+                Console.WriteLine("Need a hint? Type \"hint\".");
+                Console.WriteLine("To quit, type \"exit\".");
+
 
                 if (strikes < 6)
                 {
-                    Console.Clear(); //adjust so it won't clear on last try
+                    Console.Clear();
                 }
             }
             while (strikes != 6);
-
 
             //gameover message (win or lose)
             Console.WriteLine("The correct word was {0}!", correctWord);
@@ -145,69 +154,69 @@ namespace Hangman
             }
         }
 
-        private static string WordDifficulty(int difficulty)
+        public static HangmanWord GenerateWord(int difficulty)
         {
-            string word = "";
+            HangmanWord selection;
             Random rnd = new Random();
             int num = rnd.Next(0, 9);
 
             //change from array to a class & list for hints for each word and customization in two players
-            string[] easyWordList =
+            List<HangmanWord> easyWordList = new List<HangmanWord>()
             {
-                "dessert",
-                "peace", //replace...?
-                "tennis",
-                "strike",
-                "distress",
-                "telephone",
-                "kitchen",
-                "outside",
-                "aioli",
-                "deodorant"
+                new HangmanWord {Word = "dessert", Hint = "You eat this when you're done eating." },
+                new HangmanWord {Word = "peace", Hint = "What the world seems unable to achieve" },
+                new HangmanWord {Word = "tennis", Hint = "Serena will defeat you." },
+                new HangmanWord {Word = "strike", Hint = "3 of these and you're out." },
+                new HangmanWord {Word = "distress", Hint = "A negative overwhelming feeling." },
+                new HangmanWord {Word = "telephone", Hint = "So call me, maybe." },
+                new HangmanWord {Word = "sanitize", Hint = "Clean up, clean up, everybody clean up." },
+                new HangmanWord {Word = "outside", Hint = "Get off of the computer and go here instead." },
+                new HangmanWord {Word = "aioli", Hint = "Underrated condiment." },
+                new HangmanWord {Word = "deodorant", Hint = "Goodness, did you put any on today?" },
             };
 
-            string[] mediumWordList =
+            List<HangmanWord> mediumWordList = new List<HangmanWord>()
             {
-                "computer",
-                "stretch",
-                "sunglasses",
-                "kitchen",
-                "national",
-                "basketball",
-                "equip",
-                "pajama",
-                "avenue",
-                "deodorant"
+                new HangmanWord {Word = "computer", Hint = $"Speak binary to me." },
+                new HangmanWord {Word = "stretch", Hint = "\"I'll take 'Things you're less likely to do as you get older' for 500, Alex.\"" },
+                new HangmanWord {Word = "sunglasses", Hint = "Corey Hart wears thse at night." },
+                new HangmanWord {Word = "national", Hint = "Add a \"The\" in the beginning and you've got a great band." },
+                new HangmanWord {Word = "basketball", Hint = "Kobe." },
+                new HangmanWord {Word = "equip", Hint = "To put something on." },
+                new HangmanWord {Word = "pajama", Hint = "It's 2020, there's a pandemic, and you haven't changed out of these for a year." },
+                new HangmanWord {Word = "avenue", Hint = "Where I used to sit and talk to you, we were both 16 and it felt so right..." },
+                new HangmanWord {Word = "dictionary", Hint = "I don't know, man, look it up." },
+                new HangmanWord {Word = "kitchen", Hint = "Maybe if you check the fridge again, you'll find the answer." },
             };
 
-            string[] hardWordList =
+            List<HangmanWord> hardWordList = new List<HangmanWord>()
             {
-                "beekeeper",
-                "awkward",
-                "interview",
-                "pneumonia",
-                "onyx",
-                "disavow",
-                "kiosk",
-                "jackpot",
-                "galaxy",
-                "vitamins"
+                new HangmanWord {Word = "beekeeper", Hint = "Harvester of honey, savior of the world." },
+                new HangmanWord {Word = "awkward", Hint = "What Wayne wishes Daryl wasn't so much of." },
+                new HangmanWord {Word = "interview", Hint = "Talk one-one, usually in an official manner." },
+                new HangmanWord {Word = "pneumonia", Hint = "A respiratory infection." },
+                new HangmanWord {Word = "onyx", Hint = "Both a color and a pokemon, though varying slightly in spelling." },
+                new HangmanWord {Word = "disavow", Hint = "To deny responsibility of, to refuse to acknowledge or accept." },
+                new HangmanWord {Word = "kiosk", Hint = "Don't look the people who work at these in the eye and you'll get away just fine." },
+                new HangmanWord {Word = "jackpot", Hint = "Things you hit before you no longer work." },
+                new HangmanWord {Word = "galaxy", Hint = "\"Milkyway\" was the better choice of the candybar name, for sure." },
+                new HangmanWord {Word = "vitamin", Hint = "Take them. " },
             };
 
             if (difficulty == 1)
             {
-                word = easyWordList[num];
+                selection = easyWordList[num];
             }
             else if (difficulty == 2)
             {
-                word = mediumWordList[num];
+                selection = mediumWordList[num];
             }
             else
             {
-                word = hardWordList[num];
+                selection = hardWordList[num];
             }
 
-            return word;
+            return selection;
         }
         private static void Display(char[] displayArr)
         {
@@ -218,6 +227,12 @@ namespace Hangman
 
             Console.WriteLine("\n");
         }
+    }
+
+    class HangmanWord
+    {
+        public string Word { get; set; }
+        public string Hint { get; set; }
     }
 }
 
@@ -231,7 +246,7 @@ namespace Hangman
  *check for numbers in custom words
  *
  *general notes
- *add hints later on? -- add option to add hints if providing the word. asking for a hint also adds a limb to the hangman. add a warning when they only have 2 limbs left and they can't ask for a hint on the last... leg (limb)
+ * add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
  *add catch if user enters a number
  *if letter was previously entered, don't log it, no strike, message to user it was previously guessed.
  */
