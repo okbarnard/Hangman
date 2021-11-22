@@ -9,34 +9,77 @@ namespace Hangman
         {
             Console.WriteLine("Welcome to Hangman!");
 
-
-
             int players;
-            string playerOneName;
-            //Console.WriteLine("1 or 2 players? Please select:\n1 - 1 player\n2 - player");
-            ////try parse, if false, do while, if number > 2, reselect, etc.
-            //players = Convert.ToInt32(Console.ReadLine());
+            string playerOneName, playerTwoName;
 
-            //difficulty selection
-            //turn into enumeration?
-            int difficulty = SelectDifficulty();    
+            do
+            {
+                Console.WriteLine("1 or 2 players? Please select:\n1 - 1 player\n2 - 2 players");
+                ////try parse, if false, do while, if number > 2, reselect, etc.
+                players = Convert.ToInt32(Console.ReadLine());
 
-            Console.Write("Enter the name of player 1: ");
-            playerOneName = Console.ReadLine();
-            Player player1 = new Player(playerOneName, difficulty);
-            Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, player1.difficulty);
+                if (players < 1 || players > 2)
+                {
+                    Console.WriteLine("You will need to select at least one player and two at the most!");
+                }
+            }
+            while (players < 1 || players > 2);  
 
+            if (players == 1)
+            {
+                Console.Write("Enter the name of player 1: ");
+                playerOneName = Console.ReadLine();
+                Player player1 = new Player(playerOneName);
+
+                int difficulty = SelectDifficulty();
+
+                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty);
+
+                Console.Clear();
+                HangmanGame(player1, difficulty);
+            }
+
+            if (players == 2)
+            {
+                Console.Write("Enter the name of player 1: ");
+                playerOneName = Console.ReadLine();
+                Console.Write("Enter the name of player 2: ");
+                playerTwoName = Console.ReadLine();
+
+                Player player1 = new Player(playerOneName); //no need to store difficulty in the players class
+                Player player2 = new Player(playerTwoName);
+                Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
+
+                int difficulty = SelectDifficulty();
+
+                HangmanGame(player1, difficulty);
+                HangmanGame(player2, difficulty);
+
+                //display winner
+                if (player1.Wins > player2.Wins)
+                {
+                    Console.WriteLine("{0} wins!", player1.name);
+                }
+                else if (player2.Wins > player1.Wins)
+                {
+                    Console.WriteLine("{0} wins!", player2.name);
+                }
+                else
+                {
+                    Console.WriteLine("It's a tie!");
+                }
+
+            }          
+        }
+
+        public static void HangmanGame(Player player, int difficulty)
+        {
+            Console.WriteLine("{0}'s turn:", player.name);
             //select word according to difficulty
             Word wordAndHint = Word.GenerateWord(difficulty);
             string correctWord = wordAndHint.CreateWord;
             string hint = wordAndHint.Hint;
 
-            HangmanGame(player1, correctWord, hint);
-            
-        }
-
-        public static void HangmanGame(Player player, string correctWord, string hint)
-        {
             //set default values as '_' in placeholderDisplay to show user
             char[] placeholderDisplay = new char[correctWord.Length];
             for (int i = 0; i < correctWord.Length; i++)
@@ -53,8 +96,11 @@ namespace Hangman
             Console.WriteLine("\n6 strikes and the hanging commences!");
             do
             {
-                Console.WriteLine("Need a hint? Type \"hint\".");
-                Console.WriteLine("To quit, type \"exit\".\n");
+                Console.Clear();
+                Console.WriteLine("{0}'S TURN\n" +
+                    "\nNeed a hint? Type \"hint\"." +
+                    "To quit, type \"exit\".\n\n", player.name.ToUpper());
+
                 //hangman display
                 switch (strikes)
                 {
@@ -159,18 +205,12 @@ namespace Hangman
                         strikes++;
                     }
 
-
                     //is this a dupe of input? Is this necessary anymore?
                     //check if guessed word matches correct word
                     string guessedWord = new string(placeholderDisplay);
                     if (guessedWord == correctWord)
                     {
                         break;
-                    }
-
-                    if (strikes < 6)
-                    {
-                        Console.Clear();
                     }
                 }
             }
@@ -180,14 +220,19 @@ namespace Hangman
             Console.WriteLine("The correct word was {0}!", correctWord);
             if (strikes != 6 && input != "exit")
             {
+                
                 Console.WriteLine("Congratulations! You're free!");
+                bool win = true;
+                player.AddPoint(win);
             }
             else
             {
                 Console.WriteLine("You've been hung! ): ): ");
+                bool win = false;
+                player.AddPoint(win);
             }
 
-            //display wins and losses
+            Console.WriteLine("{0} Wins: {1}\t Losses: {2}",player.name, player.Wins, player.Losses);
         }
         private static void Display(char[] displayArr)
         {
@@ -208,7 +253,7 @@ namespace Hangman
                 difficulty = Convert.ToInt32(Console.ReadLine());
                 if (difficulty < 1 || difficulty > 3)
                 {
-                    Console.WriteLine("Please enter a number of 1 - 3 to select your difficulty.");
+                    Console.WriteLine("Please enter a number of 1 - 3 to select the difficulty."); //"the difficulty, insinutating it chooses it for both players in 2 player rounds
                 }
             }
             while (difficulty < 1 || difficulty > 3);
@@ -225,8 +270,13 @@ namespace Hangman
  *option to provide the word (with a character limit, maybe 20), no numbers or special characters
  *check for numbers in custom words
  *tie breaker rounds are provided a random word. If a tie breaker round exists...
+ *no previous words
+ *ask to generate or create word
+ *Can probably simplify 1/2 player... pass int to hangman to decide how many times to run?
  *
  * general notes
  *add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
  *add catch for letter or exit at beginning of program?
+ *if multiple letters are guessed incorrectly more than once (provide warning for first time), add strike for following.
+ *show whole body of hungman at a loss (right arm does not get added)
  */

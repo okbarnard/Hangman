@@ -9,19 +9,47 @@ namespace Hangman
     class Player
     {
         public string name;
-        public int difficulty;
         private int wins, losses;
-
-        public Player(string playerName, int playerDifficulty)
+        public int Wins
         {
-            name = playerName;
-            difficulty = playerDifficulty;
+            get
+            {
+                return wins;
+            }
+            set
+            {
+                wins = value;
+            }
 
         }
-        public void AddPoint()
+        public int Losses { get
+            {
+                return losses;
+            }
+            set
+            {
+                losses = value;
+            }
+
+        }
+
+        public Player(string playerName)
         {
-            //if win, add to win
-            //else add to loss
+            name = playerName;
+            Wins = wins;
+            Losses = losses;
+
+        }
+        public void AddPoint(bool result)
+        {
+            if (result == true)
+            {
+                wins++;
+            }
+            else
+            {
+                losses++;
+            }
         }
     }   
 }
