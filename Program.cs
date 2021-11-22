@@ -8,24 +8,35 @@ namespace Hangman
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Hangman!");
+
+
+
+            int players;
+            string playerOneName;
+            //Console.WriteLine("1 or 2 players? Please select:\n1 - 1 player\n2 - player");
+            ////try parse, if false, do while, if number > 2, reselect, etc.
+            //players = Convert.ToInt32(Console.ReadLine());
+
             //difficulty selection
-            int difficulty = 0;
-            do
-            {
-                Console.WriteLine("Please select your difficulty level: \n1 - Easy\n2 - Medium\n3 - Hard");
-                difficulty = Convert.ToInt32(Console.ReadLine());
-                if (difficulty < 1 || difficulty > 3)
-                {
-                    Console.WriteLine("Please enter a number of 1 - 3 to select your difficulty.");
-                }
-            }
-            while (difficulty < 1 || difficulty > 3);
+            //turn into enumeration?
+            int difficulty = SelectDifficulty();    
+
+            Console.Write("Enter the name of player 1: ");
+            playerOneName = Console.ReadLine();
+            Player player1 = new Player(playerOneName, difficulty);
+            Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, player1.difficulty);
 
             //select word according to difficulty
-            HangmanWord wordAndHint = GenerateWord(difficulty);
-            string correctWord = wordAndHint.Word;
+            Word wordAndHint = Word.GenerateWord(difficulty);
+            string correctWord = wordAndHint.CreateWord;
             string hint = wordAndHint.Hint;
 
+            HangmanGame(player1, correctWord, hint);
+            
+        }
+
+        public static void HangmanGame(Player player, string correctWord, string hint)
+        {
             //set default values as '_' in placeholderDisplay to show user
             char[] placeholderDisplay = new char[correctWord.Length];
             for (int i = 0; i < correctWord.Length; i++)
@@ -39,9 +50,11 @@ namespace Hangman
             string input;
             char guess;
 
-            Console.WriteLine("6 strikes and the hanging commences!");
+            Console.WriteLine("\n6 strikes and the hanging commences!");
             do
             {
+                Console.WriteLine("Need a hint? Type \"hint\".");
+                Console.WriteLine("To quit, type \"exit\".\n");
                 //hangman display
                 switch (strikes)
                 {
@@ -87,7 +100,7 @@ namespace Hangman
                         Console.WriteLine("Guess cannot be blank!");
                     }
 
-                    
+
                     if (int.TryParse(input, out intInput))
                     {
                         Console.WriteLine("Please enter a letter or guess the word.");
@@ -155,10 +168,6 @@ namespace Hangman
                         break;
                     }
 
-                    Console.WriteLine("Need a hint? Type \"hint\".");
-                    Console.WriteLine("To quit, type \"exit\".");
-
-
                     if (strikes < 6)
                     {
                         Console.Clear();
@@ -177,71 +186,8 @@ namespace Hangman
             {
                 Console.WriteLine("You've been hung! ): ): ");
             }
-        }
 
-        public static HangmanWord GenerateWord(int difficulty)
-        {
-            HangmanWord selection;
-            Random rnd = new Random();
-            int num = rnd.Next(0, 9);
-
-            //change from array to a class & list for hints for each word and customization in two players
-            List<HangmanWord> easyWordList = new List<HangmanWord>()
-            {
-                new HangmanWord {Word = "dessert", Hint = "You eat this when you're done eating." },
-                new HangmanWord {Word = "peace", Hint = "What the world seems unable to achieve" },
-                new HangmanWord {Word = "tennis", Hint = "Serena will defeat you." },
-                new HangmanWord {Word = "strike", Hint = "3 of these and you're out." },
-                new HangmanWord {Word = "distress", Hint = "A negative overwhelming feeling." },
-                new HangmanWord {Word = "telephone", Hint = "So call me, maybe." },
-                new HangmanWord {Word = "sanitize", Hint = "Clean up, clean up, everybody clean up." },
-                new HangmanWord {Word = "outside", Hint = "Get off of the computer and go here instead." },
-                new HangmanWord {Word = "aioli", Hint = "Underrated condiment." },
-                new HangmanWord {Word = "deodorant", Hint = "Goodness, did you put any on today?" },
-            };
-
-            List<HangmanWord> mediumWordList = new List<HangmanWord>()
-            {
-                new HangmanWord {Word = "computer", Hint = $"Speak binary to me." },
-                new HangmanWord {Word = "stretch", Hint = "\"I'll take 'Things you're less likely to do as you get older' for 500, Alex.\"" },
-                new HangmanWord {Word = "sunglasses", Hint = "Corey Hart wears thse at night." },
-                new HangmanWord {Word = "national", Hint = "Add a \"The\" in the beginning and you've got a great band." },
-                new HangmanWord {Word = "basketball", Hint = "Kobe." },
-                new HangmanWord {Word = "equip", Hint = "To put something on." },
-                new HangmanWord {Word = "pajama", Hint = "It's 2020, there's a pandemic, and you haven't changed out of these for a year." },
-                new HangmanWord {Word = "avenue", Hint = "Where I used to sit and talk to you, we were both 16 and it felt so right..." },
-                new HangmanWord {Word = "dictionary", Hint = "I don't know, man, look it up." },
-                new HangmanWord {Word = "kitchen", Hint = "Maybe if you check the fridge again, you'll find the answer." },
-            };
-
-            List<HangmanWord> hardWordList = new List<HangmanWord>()
-            {
-                new HangmanWord {Word = "beekeeper", Hint = "Harvester of honey, savior of the world." },
-                new HangmanWord {Word = "awkward", Hint = "What Wayne wishes Daryl wasn't so much of." },
-                new HangmanWord {Word = "interview", Hint = "Talk one-one, usually in an official manner." },
-                new HangmanWord {Word = "pneumonia", Hint = "A respiratory infection." },
-                new HangmanWord {Word = "onyx", Hint = "Both a color and a pokemon, though varying slightly in spelling." },
-                new HangmanWord {Word = "disavow", Hint = "To deny responsibility of, to refuse to acknowledge or accept." },
-                new HangmanWord {Word = "kiosk", Hint = "Don't look the people who work at these in the eye and you'll get away just fine." },
-                new HangmanWord {Word = "jackpot", Hint = "Things you hit before you no longer work." },
-                new HangmanWord {Word = "galaxy", Hint = "\"Milkyway\" was the better choice of the candybar name, for sure." },
-                new HangmanWord {Word = "vitamin", Hint = "Take them. " },
-            };
-
-            if (difficulty == 1)
-            {
-                selection = easyWordList[num];
-            }
-            else if (difficulty == 2)
-            {
-                selection = mediumWordList[num];
-            }
-            else
-            {
-                selection = hardWordList[num];
-            }
-
-            return selection;
+            //display wins and losses
         }
         private static void Display(char[] displayArr)
         {
@@ -252,12 +198,23 @@ namespace Hangman
 
             Console.WriteLine("\n");
         }
-    }
 
-    class HangmanWord
-    {
-        public string Word { get; set; }
-        public string Hint { get; set; }
+        public static int SelectDifficulty()
+        {
+            int difficulty = 0;
+            do
+            {
+                Console.WriteLine("Please select your difficulty level: \n1 - Easy\n2 - Medium\n3 - Hard");
+                difficulty = Convert.ToInt32(Console.ReadLine());
+                if (difficulty < 1 || difficulty > 3)
+                {
+                    Console.WriteLine("Please enter a number of 1 - 3 to select your difficulty.");
+                }
+            }
+            while (difficulty < 1 || difficulty > 3);
+            return difficulty;
+        }
+
     }
 }
 
@@ -265,11 +222,11 @@ namespace Hangman
  * multiplayer
  *specify whose turn it is
  *ask for how many rounds (provide options --3, 5, or 7, where last of each round when the score is even is "tiebreaker!!!" )
- *option to provide the word (with a character limit, maybe 20) supercalifragilisticexpialidocious, no numbers or special characters
- *random generator for what hint to choose to display; 3 hints max.
- *two players will need the difficulty choices individually?
+ *option to provide the word (with a character limit, maybe 20), no numbers or special characters
  *check for numbers in custom words
+ *tie breaker rounds are provided a random word. If a tie breaker round exists...
  *
- *general notes
- * add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
+ * general notes
+ *add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
+ *add catch for letter or exit at beginning of program?
  */
