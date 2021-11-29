@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+//use numbers to exit game?
+//invalid selection. Please try again
+
 namespace Hangman
 {
     class Program
@@ -33,7 +36,7 @@ namespace Hangman
 
                 int difficulty = SelectDifficulty();
 
-                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty);
+                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty); //change to difficulty name
 
                 Console.Clear();
                 HangmanGame(player1, difficulty);
@@ -50,10 +53,23 @@ namespace Hangman
                 Player player2 = new Player(playerTwoName);
                 Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
 
-                int difficulty = SelectDifficulty();
+                //select rounds function
+                Console.WriteLine("How many rounds do you want to play? 1, 2, 3");
+                int rounds = Convert.ToInt32(Console.ReadLine());
+                int currentRound = 0;
 
-                HangmanGame(player1, difficulty);
-                HangmanGame(player2, difficulty);
+                int difficulty = SelectDifficulty();
+                while (currentRound != rounds)
+                {
+
+                    DisplayPlayerTurn(player1.name);
+                    HangmanGame(player1, difficulty);
+
+                    DisplayPlayerTurn(player2.name);
+                    HangmanGame(player2, difficulty);
+                    Console.ReadLine();
+                    currentRound++;
+                }
 
                 //display winner
                 if (player1.Wins > player2.Wins)
@@ -70,6 +86,12 @@ namespace Hangman
                 }
 
             }          
+        }
+
+        private static void DisplayPlayerTurn(string name)
+        {
+            Console.WriteLine("{0}'s turn. Press any key to continue.", name);
+            Console.ReadLine();
         }
 
         public static void HangmanGame(Player player, int difficulty)
@@ -267,16 +289,6 @@ namespace Hangman
  * multiplayer
  *specify whose turn it is
  *ask for how many rounds (provide options --3, 5, or 7, where last of each round when the score is even is "tiebreaker!!!" )
- *option to provide the word (with a character limit, maybe 20), no numbers or special characters
- *check for numbers in custom words
- *tie breaker rounds are provided a random word. If a tie breaker round exists...
- *no previous words
- *ask to generate or create word
+
  *Can probably simplify 1/2 player... pass int to hangman to decide how many times to run?
- *
- * general notes
- *add a diff type of hint--where it displays a letter (this one will add a limb to the hangman.
- *add catch for letter or exit at beginning of program?
- *if multiple letters are guessed incorrectly more than once (provide warning for first time), add strike for following.
- *show whole body of hungman at a loss (right arm does not get added)
  */
