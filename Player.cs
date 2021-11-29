@@ -9,7 +9,7 @@ namespace Hangman
     class Player
     {
         public string name;
-        private int wins, losses;
+        private int wins, losses; //remove
         public int Wins
         {
             get
@@ -42,7 +42,7 @@ namespace Hangman
         }
         public void AddPoint(bool result)
         {
-            if (result == true)
+            if (result)
             {
                 wins++;
             }

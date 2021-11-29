@@ -18,6 +18,7 @@ namespace Hangman
 
         public static Word GenerateWord(int difficulty)
         {
+            //generating this list everytime doesn't seem like the best
             Word selection;
             Random rnd = new Random();
             int num = rnd.Next(0, 9);
