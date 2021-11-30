@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hangman
 {
-    class Player
+    public class Player
     {
         public string name;
         private int wins, losses; //remove
@@ -33,6 +33,16 @@ namespace Hangman
 
         }
 
+        public Player CreatePlayer()
+        {
+            string playerOneName;
+            Console.Write("Enter the name of player 1: ");
+            playerOneName = Console.ReadLine();
+            Player player = new Player(playerOneName);
+            return player;
+
+        }
+
         public Player(string playerName)
         {
             name = playerName;
@@ -40,6 +50,7 @@ namespace Hangman
             Losses = losses;
 
         }
+
         public void AddPoint(bool result)
         {
             if (result)
