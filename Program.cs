@@ -12,12 +12,67 @@ namespace Hangman
         {
             Console.WriteLine("Welcome to Hangman!");
 
-            int players;
-            string playerOneName, playerTwoName;
+            int numberOfPlayers = GetNumberOfPlayers();
 
+            if (numberOfPlayers == 1)
+            {
+                Player player1 = CreatePlayer();
+                int difficulty = SelectDifficulty();
+
+                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty); //change to difficulty name
+
+                Console.Clear();
+                Game.HangmanGame(player1, difficulty);
+            }
+
+            if (numberOfPlayers == 2)
+            {
+                Player player1 = CreatePlayer();
+                Player player2 = CreatePlayer();
+
+                Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
+
+                //select rounds function
+                int numberOfRounds = GetNumberOfRounds();
+
+                int difficulty = SelectDifficulty();
+                int currentRound = 0;
+                while (currentRound != numberOfRounds)
+                {
+
+                    DisplayPlayerTurn(player1.name);
+                    Game.HangmanGame(player1, difficulty);
+
+                    DisplayPlayerTurn(player2.name);
+                    Game.HangmanGame(player2, difficulty);
+                    Console.ReadLine();
+                    currentRound++;
+                }
+
+                //display winner
+                DetermineWinner(player1, player2);
+
+            }          
+        }
+
+        //public static void PrepareGame(int numberOfPlayers)
+        //{
+        //    //create players
+        //    //select difficulty
+        //    //get number of rounds?
+        //}
+        private static void DisplayPlayerTurn(string name)
+        {
+            Console.WriteLine("{0}'s turn. Press any key to continue.", name);
+            Console.ReadLine();
+        }
+
+        private static int GetNumberOfPlayers()
+        {
+            int players;
             do
             {
-                Console.WriteLine("1 or 2 players? Please select:\n1 - 1 player\n2 - 2 players");
+                Console.WriteLine("How many players? Please select:\n1 - 1 player\n2 - 2 players");
                 ////try parse, if false, do while, if number > 2, reselect, etc.
                 players = Convert.ToInt32(Console.ReadLine());
 
@@ -26,247 +81,11 @@ namespace Hangman
                     Console.WriteLine("You will need to select at least one player and two at the most!");
                 }
             }
-            while (players < 1 || players > 2);  
-
-            if (players == 1)
-            {
-                Console.Write("Enter the name of player 1: ");
-                playerOneName = Console.ReadLine();
-                Player player1 = new Player(playerOneName);
-
-                int difficulty = SelectDifficulty();
-
-                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty); //change to difficulty name
-
-                Console.Clear();
-                HangmanGame(player1, difficulty);
-            }
-
-            if (players == 2)
-            {
-                Console.Write("Enter the name of player 1: ");
-                playerOneName = Console.ReadLine();
-                Console.Write("Enter the name of player 2: ");
-                playerTwoName = Console.ReadLine();
-
-                Player player1 = new Player(playerOneName); //no need to store difficulty in the players class
-                Player player2 = new Player(playerTwoName);
-                Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
-
-                //select rounds function
-                Console.WriteLine("How many rounds do you want to play? 1, 2, 3");
-                int rounds = Convert.ToInt32(Console.ReadLine());
-                int currentRound = 0;
-
-                int difficulty = SelectDifficulty();
-                while (currentRound != rounds)
-                {
-
-                    DisplayPlayerTurn(player1.name);
-                    HangmanGame(player1, difficulty);
-
-                    DisplayPlayerTurn(player2.name);
-                    HangmanGame(player2, difficulty);
-                    Console.ReadLine();
-                    currentRound++;
-                }
-
-                //display winner
-                if (player1.Wins > player2.Wins)
-                {
-                    Console.WriteLine("{0} wins!", player1.name);
-                }
-                else if (player2.Wins > player1.Wins)
-                {
-                    Console.WriteLine("{0} wins!", player2.name);
-                }
-                else
-                {
-                    Console.WriteLine("It's a tie!");
-                }
-
-            }          
+            while (players < 1 || players > 2);
+            return players;
         }
 
-        private static void DisplayPlayerTurn(string name)
-        {
-            Console.WriteLine("{0}'s turn. Press any key to continue.", name);
-            Console.ReadLine();
-        }
-
-        public static void HangmanGame(Player player, int difficulty)
-        {
-            Console.WriteLine("{0}'s turn:", player.name);
-            //select word according to difficulty
-            Word wordAndHint = Word.GenerateWord(difficulty);
-            string correctWord = wordAndHint.CreateWord;
-            string hint = wordAndHint.Hint;
-
-            //set default values as '_' in placeholderDisplay to show user
-            char[] placeholderDisplay = new char[correctWord.Length];
-            for (int i = 0; i < correctWord.Length; i++)
-            {
-                placeholderDisplay[i] = '_';
-            }
-
-            //guess & strike declaration
-            List<char> guesses = new List<char>();
-            int strikes = 0;
-            string input;
-            char guess;
-
-            Console.WriteLine("\n6 strikes and the hanging commences!");
-            do
-            {
-                Console.Clear();
-                Console.WriteLine("{0}'S TURN\n" +
-                    "\nNeed a hint? Type \"hint\"." +
-                    "To quit, type \"exit\".\n\n", player.name.ToUpper());
-
-                //hangman display
-                switch (strikes)
-                {
-                    case 0:
-                        Console.WriteLine("-----\n|   |  \n|    \n|\n|\n|\n=======");
-                        break;
-                    case 1: //head
-                        Console.WriteLine("-----\n|   |  \n|   O\n|\n|\n|\n=======");
-                        break;
-                    case 2: //body
-                        Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|\n|\n=======");
-                        break;
-                    case 3: //left leg
-                        Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|  /\n|\n=======");
-                        break;
-                    case 4: //right leg
-                        Console.WriteLine("-----\n|   |  \n|   O\n|   |\n|  / \\\n|\n=======\nCareful! Two more guesses!");
-                        break;
-                    case 5: //left arm
-                        Console.WriteLine("-----\n|   |  \n|   O\n| --|\n|  / \\\n|\n=======\nOne more guess!");
-                        break;
-                    case 6: //right arm
-                        Console.WriteLine("-----\n|   |  \n|   O\n| --|--\n|  / \\\n|\n=======");
-                        break;
-                }
-
-                //display guesses (correct & incorrect)
-                Console.Write("Previous Guesses: ");
-                Display(guesses.ToArray());
-                Display(placeholderDisplay);
-
-                bool intIsTrue;
-                //Guess prompt, intake, and store; could add an option for them to correct the whole word here.
-                do
-                {
-                    intIsTrue = false;
-                    Console.Write("Guess a letter: ");
-                    int intInput;
-                    input = Console.ReadLine();
-
-                    if (string.IsNullOrEmpty(input))
-                    {
-                        Console.WriteLine("Guess cannot be blank!");
-                    }
-
-
-                    if (int.TryParse(input, out intInput))
-                    {
-                        Console.WriteLine("Please enter a letter or guess the word.");
-                        intIsTrue = true;
-                    }
-
-                    input = input.Trim().ToLower();
-
-                    if (input == "exit")
-                    {
-                        Console.WriteLine("Closing Program.");
-                        break;
-                    }
-
-                    if (input == "hint")
-                    {
-                        Console.WriteLine(hint);
-                    }
-
-                    if ((input.Length > 1 && input != "exit" && input != "hint" && input != correctWord))
-                    {
-                        Console.WriteLine("You have either guessed the incorrect word or typed more than one character -- Please try again.");
-                    }
-                }
-                while ((input.Length > 1 && input != correctWord) || (string.IsNullOrEmpty(input)) || intIsTrue);
-
-                if (input == correctWord || input == "exit")
-                {
-                    break;
-                }
-
-                //if guess already exists... Don't add, don't add strike. Display message.
-                guess = Convert.ToChar(input);
-
-                if (guesses.Contains(guess))
-                {
-                    Console.Clear();
-                    Console.WriteLine("You've already guessed this.");
-                }
-                else
-                {
-                    guesses.Add(guess);
-
-                    //if guess is correct, update placeholderDisplay
-                    for (int i = 0; i < correctWord.Length; i++)
-                    {
-                        if (guess == correctWord[i])
-                        {
-                            placeholderDisplay[i] = guess;
-                        }
-                    }
-
-                    //if guess is incorrect, increase strikes
-                    if (!(correctWord.Contains(guess)))
-                    {
-                        strikes++;
-                    }
-
-                    //is this a dupe of input? Is this necessary anymore?
-                    //check if guessed word matches correct word
-                    string guessedWord = new string(placeholderDisplay);
-                    if (guessedWord == correctWord)
-                    {
-                        break;
-                    }
-                }
-            }
-            while (strikes != 6);
-
-            //gameover message (win or lose)
-            Console.WriteLine("The correct word was {0}!", correctWord);
-            if (strikes != 6 && input != "exit")
-            {
-                
-                Console.WriteLine("Congratulations! You're free!");
-                bool win = true;
-                player.AddPoint(win);
-            }
-            else
-            {
-                Console.WriteLine("You've been hung! ): ): ");
-                bool win = false;
-                player.AddPoint(win);
-            }
-
-            Console.WriteLine("{0} Wins: {1}\t Losses: {2}",player.name, player.Wins, player.Losses);
-        }
-        private static void Display(char[] displayArr)
-        {
-            foreach (var letter in displayArr)
-            {
-                Console.Write("{0 }", letter);
-            }
-
-            Console.WriteLine("\n");
-        }
-
-        public static int SelectDifficulty()
+        private static int SelectDifficulty()
         {
             int difficulty = 0;
             do
@@ -282,6 +101,39 @@ namespace Hangman
             return difficulty;
         }
 
+        public static Player CreatePlayer()
+        {
+            string playerName;
+            Console.Write("Enter player name: ");
+            playerName = Console.ReadLine();
+            Player player = new Player(playerName);
+            return player;
+
+        }
+
+        public static int GetNumberOfRounds()
+        {
+            Console.WriteLine("How many rounds do you want to play? 1, 2, 3");
+            int rounds = Convert.ToInt32(Console.ReadLine());
+
+            return rounds;
+        }
+
+        private static void DetermineWinner(Player player1, Player player2)
+        {
+            if (player1.Wins > player2.Wins)
+            {
+                Console.WriteLine("{0} wins!", player1.name);
+            }
+            else if (player1.Wins > player2.Wins)
+            {
+                Console.WriteLine("{0} wins!", player2.name);
+            }
+            else
+            {
+                Console.WriteLine("It's a tie!");
+            }
+        }
     }
 }
 

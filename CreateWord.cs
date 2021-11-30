@@ -16,7 +16,7 @@ namespace Hangman
             Hint = hint;
         }
 
-        public static Word GenerateWord(int difficulty)
+        public static Word GetWord(int difficulty)
         {
             //generating this list everytime doesn't seem like the best
             Word selection;
