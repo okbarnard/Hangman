@@ -22,7 +22,9 @@ namespace Hangman
             }
 
         }
-        public int Losses { get
+        public int Losses
+        {
+            get
             {
                 return losses;
             }
@@ -32,7 +34,6 @@ namespace Hangman
             }
 
         }
-
         public Player CreatePlayer()
         {
             string playerOneName;

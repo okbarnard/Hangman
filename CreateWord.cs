@@ -16,15 +16,7 @@ namespace Hangman
             Hint = hint;
         }
 
-        public static Word GetWord(int difficulty)
-        {
-            //generating this list everytime doesn't seem like the best
-            Word selection;
-            Random rnd = new Random();
-            int num = rnd.Next(0, 9);
-
-            //change from array to a class & list for hints for each word and customization in two players
-            List<Word> easyWordList = new List<Word>()
+        public static List<Word> easyWordList = new List<Word>()
             {
                 new Word("dessert","You eat this when you're done eating." ),
                 new Word("peace", "What the world seems unable to achieve" ),
@@ -38,7 +30,7 @@ namespace Hangman
                 new Word("deodorant", "Goodness, did you put any on today?"),
             };
 
-            List<Word> mediumWordList = new List<Word>()
+        public static List<Word> mediumWordList = new List<Word>()
             {
                 new Word("computer", $"Speak binary to me." ),
                 new Word("stretch", "\"I'll take 'Things you're less likely to do as you get older' for 500, Alex.\"" ),
@@ -52,7 +44,7 @@ namespace Hangman
                 new Word("kitchen", "Maybe if you check the fridge again, you'll find the answer." )
             };
 
-            List<Word> hardWordList = new List<Word>()
+        public static List<Word> hardWordList = new List<Word>()
             {
                 new Word("beekeeper", "Harvester of honey, savior of the world." ),
                 new Word("awkward", "What Wayne wishes Daryl wasn't so much of." ),
@@ -65,6 +57,16 @@ namespace Hangman
                 new Word("galaxy", "\"Milkyway\" was the better choice of the candybar name, for sure." ),
                 new Word("vitamin", "Take them. " )
             };
+
+        public static Word GetWord(int difficulty)
+        {
+            //generating this list everytime doesn't seem like the best
+            Word selection;
+            Random rnd = new Random();
+            int num = rnd.Next(0, 9);
+
+            //change from array to a class & list for hints for each word and customization in two players
+            
 
             if (difficulty == 1)
             {

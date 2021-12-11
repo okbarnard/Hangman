@@ -16,43 +16,52 @@ namespace Hangman
 
             if (numberOfPlayers == 1)
             {
-                Player player1 = CreatePlayer();
-                int difficulty = SelectDifficulty();
-
-                Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty); //change to difficulty name
-
-                Console.Clear();
-                Game.HangmanGame(player1, difficulty);
+                HangmanForOne();
             }
 
             if (numberOfPlayers == 2)
             {
-                Player player1 = CreatePlayer();
-                Player player2 = CreatePlayer();
-
-                Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
-
-                //select rounds function
-                int numberOfRounds = GetNumberOfRounds();
-
-                int difficulty = SelectDifficulty();
-                int currentRound = 0;
-                while (currentRound != numberOfRounds)
-                {
-
-                    DisplayPlayerTurn(player1.name);
-                    Game.HangmanGame(player1, difficulty);
-
-                    DisplayPlayerTurn(player2.name);
-                    Game.HangmanGame(player2, difficulty);
-                    Console.ReadLine();
-                    currentRound++;
-                }
-
-                //display winner
-                DetermineWinner(player1, player2);
-
+                HangmanForTwo();
             }          
+        }
+
+        public static void HangmanForOne()
+        {
+            Player player1 = CreatePlayer();
+            int difficulty = SelectDifficulty();
+
+            Console.WriteLine("Hi {0}! You have selected level {1} difficulty.", player1.name, difficulty); //change to difficulty name
+
+            Console.Clear();
+            Game.HangmanGame(player1, difficulty);
+        }
+
+        public static void HangmanForTwo()
+        {
+            Player player1 = CreatePlayer();
+            Player player2 = CreatePlayer();
+
+            Console.WriteLine("Hello {0} (player 1) and {1} (player 2)!", player1.name, player2.name);
+
+            //select rounds function
+            int numberOfRounds = GetNumberOfRounds();
+
+            int difficulty = SelectDifficulty();
+            int currentRound = 0;
+            while (currentRound != numberOfRounds)
+            {
+
+                DisplayPlayerTurn(player1.name);
+                Game.HangmanGame(player1, difficulty);
+
+                DisplayPlayerTurn(player2.name);
+                Game.HangmanGame(player2, difficulty);
+                Console.ReadLine();
+                currentRound++;
+            }
+
+            //display winner
+            DetermineWinner(player1, player2);
         }
 
         //public static void PrepareGame(int numberOfPlayers)
@@ -136,11 +145,3 @@ namespace Hangman
         }
     }
 }
-
-/*
- * multiplayer
- *specify whose turn it is
- *ask for how many rounds (provide options --3, 5, or 7, where last of each round when the score is even is "tiebreaker!!!" )
-
- *Can probably simplify 1/2 player... pass int to hangman to decide how many times to run?
- */
