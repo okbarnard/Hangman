@@ -10,15 +10,11 @@ namespace Hangman
     {
         public static void HangmanGame(Player player, int difficulty)
         {
-            //select word according to difficulty
-            Word wordAndHint = Word.GetWord(difficulty);
-            string correctWord = wordAndHint.CreateWord,
-                hint = wordAndHint.Hint;
-
+            GenerateWordWithHint(difficulty, out string correctWord, out string hint);
             char[] placeholderDisplay = GeneratePlaceholder(correctWord);
 
             //guess & strike declaration
-            List<char> guesses = new List<char>();
+            List<char> guesses = new List<char>(); //was this always a list?
             int strikes = 0;
             string input;
             char guess;
@@ -29,14 +25,11 @@ namespace Hangman
             {
                 Console.Clear();
                 DisplayHeader(player.name);
-
                 //hangman display
                 HangmanDisplay(strikes);
+                //display guesses
+                DisplayGuess(guesses, placeholderDisplay);
 
-                //display guesses (correct & incorrect)
-                Console.Write("Previous Guesses: ");
-                Display(guesses.ToArray());
-                Display(placeholderDisplay);
 
                 bool inputIsInvalid; //empty or an int
                 //Guess prompt, intake, and store; could add an option for them to correct the whole word here.
@@ -59,9 +52,9 @@ namespace Hangman
 
                     input = input.Trim().ToLower();
 
-                    if (!inputIsInvalid && input.Length > 1 && input != cor)
+                    if (!inputIsInvalid && input.Length > 1 && input != correctWord)
                     {
-
+                        //separate function?
                         if (input == "exit")
                         {
                             Console.WriteLine("Closing program.");
@@ -123,11 +116,43 @@ namespace Hangman
             Console.WriteLine("{0} Wins: {1}\t Losses: {2}", player.name, player.Wins, player.Losses);
         }
 
+        public static Word GenerateWordWithHint(int difficulty, out string correctWord, out string hint)
+        {
+            //select word according to difficulty
+            Word wordAndHint = Word.GetWord(difficulty);
+            correctWord = wordAndHint.CreateWord;
+            hint = wordAndHint.Hint;
+            return wordAndHint;
+        }
         public static void DisplayHeader(string name)
         {
             Console.WriteLine("{0}'S TURN\n" +
                     "\nNeed a hint? Type \"hint\"." +
                     "To quit, type \"exit\".\n\n", name.ToUpper());
+        }
+        private static void Display(char[] displayArr) //can probably refactor this and generate placeholder...
+        {
+            foreach (var letter in displayArr)
+            {
+                Console.Write("{0 }", letter);
+            }
+
+            Console.WriteLine("\n");
+        }
+        public static void DisplayMessage(bool isEmptyOrANumber)
+        {
+            if (isEmptyOrANumber)
+            {
+                Console.WriteLine("Please enter a valid input (no numbers; cannot be blank).");
+            }
+        }
+
+        public static void DisplayGuess(List<char> guesses, char[] placeholderDisplay )
+        {
+            //display guesses (correct & incorrect)
+            Console.Write("Previous Guesses: ");
+            Display(guesses.ToArray());
+            Display(placeholderDisplay);
         }
 
         private static void HangmanDisplay(int strikes)
@@ -156,15 +181,6 @@ namespace Hangman
                     Console.WriteLine("-----\n|   |  \n|   O\n| --|--\n|  / \\\n|\n=======");
                     break;
             }
-        }
-        private static void Display(char[] displayArr)
-        {
-            foreach (var letter in displayArr)
-            {
-                Console.Write("{0 }", letter);
-            }
-
-            Console.WriteLine("\n");
         }
 
         private static char[] GeneratePlaceholder(string correctWord)
@@ -205,13 +221,6 @@ namespace Hangman
             }
         }
 
-        public static void DisplayMessage(bool isEmptyOrANumber)
-        {
-            if (isEmptyOrANumber)
-            {
-                Console.WriteLine("Please enter a valid input (no numbers; cannot be blank).");
-            }
-        }
 
         //public static void CheckIfExit()
         //{
